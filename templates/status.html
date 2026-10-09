@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Status</title>
+</head>
+<body>
+<div class="container mt-4" style="border: 1px solid #ccc; padding: 15px; background-color: white; border-radius: 6px; height: 400px; width: 310px;">
+    <h2 align="center">Stock Status</h2>
+
+    <div class="list-group">
+        {% for item in items %}
+            {% comment %}
+            {% if item.name == "Scanner" %}
+                {% with bg="#ccff00" %}{% endwith %}
+            {% endif %}
+            {% endcomment %}
+            <div class="list-group-item d-flex justify-content-between align-items-center py-3" style="width: 280px; border: 2px solid #ccc; padding: 15px; background-color: {% if item.name == 'Scanner' %}#f0f8ff
+                                                                                                                                                                               {% elif item.name == 'Printer' %}#ffb6c1
+                                                                                                                                                                               {% elif item.name == 'Laptop' %}#98fb98
+                                                                                                                                                                               {% elif item.name == 'Desktop' %}#fdfd96
+                                                                                                                                                                                {% elif item.name == 'Monitor' %}#e3e4fa
+                                                                                                                                                                               {% else %}#ffffff{% endif %};
+                                                                                                                                                                               padding-left: 20px; border: 1px solid #ccc;">
+
+                <!-- Item Icon and Name -->
+                <div class="d-flex align-items-center">
+                    <img src="
+                        {% if item.name == 'Laptop' %}
+                            {% static 'images/laptop.png' %}
+                        {% elif item.name == 'Desktop' %}
+                            {% static 'images/desktop.png' %}
+                        {% elif item.name == 'Scanner' %}
+                            {% static 'images/scanner.png' %}
+                        {% elif item.name == 'Printer' %}
+                            {% static 'images/printer.png' %}
+                        {% elif item.name == 'Monitor' %}
+                            {% static 'images/monitor.png' %}
+                        {% comment %}
+                        {% else %}
+                            {% static 'images/default.png' %}
+                         {% endcomment %}
+                        {% endif %}"
+                    alt="{{ item.name }}" width="24" height="24" class="me-3">
+
+                    <span class="fw-bold">{{ item.name }}</span>
+                </div>
+
+                <!-- Item Quantity Number -->
+                <div>
+                    <span class="badge bg-primary rounded-pill px-3 py-2">
+                        In Stock: {{ item.stock_number }}
+                    </span>
+                </div>
+
+            </div>
+
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

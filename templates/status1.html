@@ -1,0 +1,63 @@
+{% load static %}
+<style>
+    .status-container {
+        border: 1px solid #ccc;
+        padding: 15px;
+        background-color: #ffffff;
+        border-radius: 6px;
+        width: 100%;
+        max-width: 400px;
+    }
+    .status-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+        margin-bottom: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+    .status-item-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+</style>
+
+<div class="status-container">
+    <h2 style="font-family: 'Courier New', Courier, monospace; font-weight: 700; text-align: center; margin-top: 0;">STOCK STATUS</h2>
+
+    <div class="list-group">
+        {% for item in items %}
+            <div class="status-item" style="background-color: {% if item.name == 'Scanner' %}#f0f8ff
+                                                               {% elif item.name == 'Printer' %}#ffb6c1
+                                                               {% elif item.name == 'Laptop' %}#98fb98
+                                                               {% elif item.name == 'Desktop' %}#fdfd96
+                                                               {% elif item.name == 'Monitor' %}#e3e4fa
+                                                               {% else %}#ffffff{% endif %};">
+
+                <!-- Item Icon and Name -->
+                <div class="status-item-info">
+                    <img src="
+                        {% if item.name == 'Laptop' %}{% static 'images/laptop.png' %}
+                        {% elif item.name == 'Desktop' %}{% static 'images/desktop.png' %}
+                        {% elif item.name == 'Scanner' %}{% static 'images/scanner.png' %}
+                        {% elif item.name == 'Printer' %}{% static 'images/printer.png' %}
+                        {% elif item.name == 'Monitor' %}{% static 'images/monitor.png' %}
+                        {% endif %}"
+                    alt="{{ item.name }}" width="24" height="24">
+
+                    <span class="fw-bold">{{ item.name }}</span>
+                </div>
+
+                <!-- Item Quantity Number -->
+                <div>
+                    <span class="badge bg-primary rounded-pill px-3 py-2">
+                        In Stock: {{ item.stock_number }}
+                    </span>
+                </div>
+
+            </div>
+        {% endfor %}
+    </div>
+</div>

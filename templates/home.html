@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Operations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 320px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+        }
+        .btn-add {
+            background-color: #28a745;
+        }
+        .btn-add:hover {
+            background-color: #218838;
+        }
+        .btn-sub {
+            background-color: #dc3545;
+        }
+        .btn-sub:hover {
+            background-color: #c82333;
+        }
+    </style>
+    {% include 'css.html' %}
+</head>
+<body style="background-color: #f4f4f9;">
+
+
+<div style="position: absolute; top: 50px; right: 20px;">
+    {% include 'state_warning.html' %}
+</div>
+
+<div style="position: absolute; top: 10px; right: 30px;">
+
+    <form action="{% url 'accounts:logout' %}" method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" style="background: none; border: none; color: #007bff; cursor: pointer; text-decoration: underline; font-size: 16px;">
+            Log Out
+        </button>
+    </form>
+
+</div>
+
+<div style="position: absolute; top: 9px; left:30px">
+    <form action="{% url 'device_reports:report_create' %}" method="get">
+    {% csrf_token %}
+    <button type="submit" style="background: none; border: none; color: #007bff; cursor: pointer; text-decoration: underline; font-size: 16px;">
+        Create Device Report
+    </button>
+</form>
+</div>
+
+<div class="container" style="width: 100%;">
+
+
+<div style="position: absolute; top: 75px; left: 300px;">
+    {% include 'status.html' %}
+</div>
+
+<div class="card" style="position: absolute; top: 100px; right: 300px;">
+        <h2>Stock Operations</h2>
+        <!-- Django Form -->
+        <form method="POST" action="{% url 'stock_operations:home_view' %}">
+            {% csrf_token %}
+            <input type="hidden" name="form_token" value="{{ form_token }}">
+            <!-- Selectable List Box -->
+            <div class="form-group">
+                <label for="itemSelect">Select Device:</label>
+                <select name="selected_device" id="deviceSelect">
+                    <option value="" disabled selected>Choose a device ...</option>
+                    {% for device in devices %}
+                        <option value={{ device }}>{{ device }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <!-- Entry Box -->
+            <div class="form-group">
+                <label for="entryBox">Enter the number to Add/Subtruct:</label>
+                <input type="text" name="entry_value" id="entryBox" placeholder="Enter a number...">
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="submit" name="action" value="add" class="btn-add">Add</button>
+                <button type="submit" name="action" value="substruct" class="btn-sub">Subtruct</button>
+            </div>
+        </form>
+        <br>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% include 'js.html' %}
+</body>
+</html>

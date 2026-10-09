@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div id="stock-warning-container"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("{% url 'check_stock_warning' %}")
+        .then(response => response.json())
+        .then(data => {
+            if (data.has_warning) {
+                const container = document.getElementById("stock-warning-container");
+                container.innerHTML = `
+                    <div style="padding: 12px; background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 4px; margin-bottom: 20px;">
+                        ${data.message}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => console.error("Error checking stock warning:", error));
+});
+</script>
+</body>
+</html>

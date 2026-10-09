@@ -1,0 +1,19 @@
+if (!event.willCommit && event.change !== "") {
+
+    if (typeof keyBuffer === "undefined") {
+        keyBuffer = "";
+    }
+
+    keyBuffer += event.change;
+
+    if (keyBuffer.length >= 16) {
+
+        var captured = keyBuffer.substring(0, 16);
+
+        app.alert(
+            "Captured:\n" + captured
+        );
+
+        keyBuffer = keyBuffer.substring(16);
+    }
+}

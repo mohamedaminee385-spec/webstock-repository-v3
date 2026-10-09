@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'css.html' %}
+    <meta charset="UTF-8">
+    <title>Redirection Page</title>
+</head>
+<body style="margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center;">
+<div class="container">
+<h1>Object saved successfully</h1>
+<a href="{% url 'stock_operations:home_view' %}">Click Here to re-enter new values</a>
+</div>
+</body>
+{% include 'js.html' %}
+</html>

@@ -1,0 +1,26 @@
+<button id="launch-btn" onclick="triggerLocalScript()">Run Local App</button>
+<pre id="output"></pre>
+
+<script>
+async function triggerLocalScript() {
+  const outputEl = document.getElementById('output');
+  outputEl.textContent = "Sending request via Django proxy...";
+
+  try {
+    // Calls Django directly on HTTPS
+    const response = await fetch("http://127.0.0.1:5000/run", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "69420"
+      },
+      body: JSON.stringify({ action: "open_notepad" })
+    });
+
+    const data = await response.json();
+    outputEl.textContent = JSON.stringify(data, null, 2);
+  } catch (err) {
+    outputEl.textContent = "Error: " + err;
+  }
+}
+</script>

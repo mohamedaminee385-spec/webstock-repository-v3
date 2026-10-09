@@ -1,0 +1,261 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Operations</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Top Navigation Header */
+        .top-nav {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .top-nav form button {
+            background: none;
+            border: none;
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 15px;
+            padding: 0;
+        }
+
+        /* System Warning Banner */
+        .warning-wrapper {
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 15px;
+        }
+
+        /* Main Content Grid Layout */
+        .main-content {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+
+        }
+
+        /* Stock Operations Card */
+        .card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .card h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 37px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .button-group button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+        }
+        .btn-add { background-color: #28a745; }
+        .btn-add:hover { background-color: #218838; }
+        .btn-sub { background-color: #dc3545; }
+        .btn-sub:hover { background-color: #c82333; }
+
+        .messages {
+            padding-left: 0;
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        /* Mobile Layout Adjustments (Screens smaller than 768px) */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column-reverse; /* Shows Stock Status above or below operations cleanly */
+                align-items: center;
+            }
+            .top-nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        .actions-row {
+            width: 100%;
+            max-width: 900px;       /* same width as the rest of your page */
+            display: flex;
+            justify-content: flex-end;
+            gap: 200px;
+            margin-top: 20px;
+            position: relative;
+            right: 250px;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% include 'css.html' %}
+</head>
+<body>
+
+    <!-- Header Links -->
+    <div class="top-nav">
+        <div>
+            <!--
+            <form action="{% url 'device_reports:report_create' %}" method="get">
+                {% csrf_token %}
+                <button type="submit">Create Device Report</button>
+            </form>
+            -->
+            <a href="{% url 'device_reports:report_create' %}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Create Device Report
+            </a>
+        </div>
+
+        <div>
+
+            <!--
+            <form action="{% url 'accounts:logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Log Out</button>
+            </form>
+            -->
+        <a href="{% url 'accounts:logout' %}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+            Logout
+            <svg class="w-4 h-4 mr-1.5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+        </a>
+        </div>
+
+
+    </div>
+
+
+
+    <!-- Warnings Section -->
+    <div class="warning-wrapper">
+        {% include 'state_warning.html' %}
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-content">
+
+        <!-- Status Panel Included -->
+        {% include 'status1.html' %}
+
+        <!-- Operations Card -->
+        <div class="card"  style="height: 362px;">
+            <h2 style="font-family: 'Courier New', Courier, monospace; font-weight: 700">STOCK OPERATIONS</h2>
+            <form method="POST" action="{% url 'stock_operations:home_view' %}">
+                {% csrf_token %}
+                <input type="hidden" name="form_token" value="{{ form_token }}">
+
+                <div class="form-group">
+                    <label for="deviceSelect">Select Device:</label>
+                    <select name="selected_device" id="deviceSelect">
+                        <option value="" disabled selected>Choose a device ...</option>
+                        {% for device in devices %}
+                            <option value="{{ device }}">{{ device }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="entryBox">Enter the number to Add/Subtract:</label>
+                    <input type="text" name="entry_value" id="entryBox" placeholder="Enter a number...">
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" name="action" value="add" class="btn-add">Add</button>
+                    <button type="submit" name="action" value="substruct" class="btn-sub">Subtract</button>
+                </div>
+            </form>
+
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="alert alert-danger">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+    </div>
+    <!--
+    <div class="container">
+        <div class="container" style="position: relative; top: 50px; left:300px">
+        {% if user.is_authenticated and user.is_staff %}
+            <a href="{% url 'orders:create_order' %}" class="btn btn-sm btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>Create New Order
+            </a>
+        {% endif %}
+
+        </div>
+
+        <div class="container" style="position: relative; top: 20px; left:810px;">
+        <a href="{% url 'audit:get_logs' %}" class="btn btn-sm btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Generate PDF
+        </a>
+        </div>
+    </div>
+    -->
+     <div class="actions-row">
+        {% if user.is_authenticated and user.is_staff %}
+            <a href="{% url 'orders:create_order' %}" class="btn btn-sm btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>Create New Order
+            </a>
+        {% endif %}
+        <a href="{% url 'audit:get_logs' %}" class="btn btn-sm btn-primary">
+            <i class="bi bi-file-earmark-pdf me-1"></i>Generate PDF
+        </a>
+    </div>
+
+    {% include 'js.html' %}
+</body>
+</html>

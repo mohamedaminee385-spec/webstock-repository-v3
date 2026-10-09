@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Warnings</title>
+</head>
+<body>
+
+<div id="stock-warning-container"></div>
+
+<script>
+// 1. Base State Class (Interface)
+class StockState {
+    render(context) {}
+}
+
+// 2. Concrete State: Loading State
+class LoadingState extends StockState {
+    render(context) {
+        context.container.innerHTML = `
+            <div style="padding: 12px; color: #555;">
+                Checking stock levels...
+            </div>
+        `;
+        context.fetchStock(); // Trigger async fetch on enter
+    }
+}
+
+// 3. Concrete State: Warning State
+class WarningState extends StockState {
+    constructor(message) {
+        super();
+        this.message = message;
+    }
+
+    render(context) {
+        context.container.innerHTML = `
+            <div style="padding: 12px; background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 4px; margin-bottom: 20px;">
+                ${this.message}
+            </div>
+        `;
+    }
+}
+
+// 4. Concrete State: Clear / Normal State (No Warnings)
+class ClearState extends StockState {
+    render(context) {
+        context.container.innerHTML = ''; // Hide or show normal status
+    }
+}
+
+// 5. Concrete State: Error State
+class ErrorState extends StockState {
+    render(context) {
+        context.container.innerHTML = `
+            <div style="padding: 12px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px; margin-bottom: 20px;">
+                Failed to verify stock status.
+            </div>
+        `;
+    }
+}
+
+// 6. Context Class
+class StockWarningWidget {
+    constructor(containerId, endpointUrl) {
+        this.container = document.getElementById(containerId);
+        this.endpointUrl = endpointUrl;
+        this.currentState = null;
+    }
+
+    setState(state) {
+        this.currentState = state;
+        this.currentState.render(this);
+    }
+
+    init() {
+        this.setState(new LoadingState());
+    }
+
+    async fetchStock() {
+        try {
+            const response = await fetch(this.endpointUrl);
+            if (!response.ok) throw new Error("Network error");
+
+            const data = await response.json();
+
+            if (data.has_warning && data.message) {
+                this.setState(new WarningState(data.message));
+            } else {
+                this.setState(new ClearState());
+            }
+        } catch (error) {
+            console.error("Error checking stock warning:", error);
+            this.setState(new ErrorState());
+        }
+    }
+}
+
+// 7. Initialization
+document.addEventListener("DOMContentLoaded", function () {
+    const stockWidget = new StockWarningWidget(
+        "stock-warning-container",
+        "{% url 'stock_operations:check_stock_warning' %}"
+    );
+    stockWidget.init();
+});
+</script>
+</body>
+</html>
